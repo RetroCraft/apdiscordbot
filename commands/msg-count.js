@@ -4,14 +4,21 @@ const _ = require('lodash');
 module.exports = (args, msg) => {
   let { channel } = msg;
   if (args[1]) {
-    const referenced = msg.guild.channels.find(c => c.name === args[1].replace('#', ''));
+    let referenced;
+    const snowflakeTest = /<#(.+)>/.exec(args[1]);
+    if (snowflakeTest) {
+      referenced = msg.guild.channels.get(snowflakeTest[1]);
+    } else {
+      referenced = msg.guild.channels.find(c => c.name === args[1]);
+    }
     if (referenced) channel = referenced;
   }
   channel.fetchMessages({ limit: 100 }).then((messages) => {
     console.log(`[msgcount] found ${messages.size} messages for #${channel.name}`);
     const stats = {};
     messages.forEach((message) => {
-      const name = message.member.nickname || message.author.username;
+      let name = message.author.username;
+      if (message.member) name = message.member.nickname;
       if (stats[name]) {
         stats[name] += 1;
       } else {
