@@ -12,8 +12,8 @@ const loadComic = num =>
   axios
     .get(`http://xkcd.com/${num}/info.0.json`)
     .then(res => ({ embed: sendComic(res.data) }))
-    .catch((err) => {
-      console.error(`[xkcd] failed finding comic ${num}`, err);
+    .catch(() => {
+      console.error(`[xkcd] failed finding comic ${num}`);
       return `Cannot find xkcd comic ${num}`;
     });
 
@@ -32,8 +32,8 @@ module.exports = async (args, msg) => {
       .then((res) => {
         msg.channel.send({ embed: sendComic(res.data) });
       })
-      .catch((err) => {
-        console.error('Failed to load current xkcd commic', err);
+      .catch(() => {
+        console.error('[xkcd] failed to load current xkcd commic');
       });
   }
 };

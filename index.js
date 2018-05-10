@@ -9,12 +9,11 @@ const commands = {
 };
 
 client.on('ready', () => {
-  console.log('connected');
+  console.log('[bot] connected');
 });
 
 client.on('message', (msg) => {
   if (msg.content.startsWith(':')) {
-    console.log(msg.content);
     const args = msg.content.substring(1).split(' ');
     if (commands[args[0]]) commands[args[0]](args, msg);
   }
