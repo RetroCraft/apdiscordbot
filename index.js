@@ -1,11 +1,14 @@
 const Discord = require('discord.js');
 const settings = require('./settings.json');
-const xkcd = require('./xkcd');
+
+const xkcd = require('./commands/xkcd');
+const msgcount = require('./commands/msg-count');
 
 const client = new Discord.Client();
 
 const commands = {
   xkcd,
+  msgcount,
 };
 
 client.on('ready', () => {
