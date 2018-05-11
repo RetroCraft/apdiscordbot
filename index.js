@@ -20,8 +20,13 @@ client.on('message', (msg) => {
     const args = msg.content.substring(1).split(' ');
     if (commands[args[0]]) commands[args[0]](args, msg);
   }
-  if (/^no (u|you)[.! ]*$/i.test(msg.content)) {
-    msg.channel.send(`${client.emojis.find('name', 'noU')}`);
+  // no u
+  if (msg.author.id !== client.user.id) {
+    const noU = client.emojis.find('name', 'noU');
+    const noURegex = /^((yo)?u'?re? m[ou]m (big)? g[ae]y)|(no ?(u|you))[.! ]*$/i;
+    if (noURegex.exec(msg.content) || msg.content.includes(noU.toString())) {
+      msg.channel.send(`${client.emojis.find('name', 'noU')}`);
+    }
   }
 });
 
