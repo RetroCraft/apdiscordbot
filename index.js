@@ -4,12 +4,14 @@ const settings = require('./settings.json');
 
 const xkcd = require('./commands/xkcd');
 const msgcount = require('./commands/msg-count');
+const countdown = require('./commands/countdown');
 
 const client = new Discord.Client();
 
 const commands = {
   xkcd,
   msgcount,
+  countdown,
 };
 
 let responses = {};
