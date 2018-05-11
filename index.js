@@ -1,7 +1,6 @@
 const Discord = require('discord.js');
 const _ = require('lodash');
 const minimist = require('minimist');
-const settings = require('./settings.json');
 
 const xkcd = require('./commands/xkcd');
 const msgcount = require('./commands/msg-count');
@@ -47,4 +46,4 @@ client.on('message', (msg) => {
   }
 });
 
-client.login(settings.secret);
+client.login(process.env.BOT_TOKEN);
