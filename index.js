@@ -17,6 +17,7 @@ const parser = yargs()
   .commandDir('commands')
   .demand(1)
   .strict()
+  .wrap(null)
   .help();
 
 let responses = {};
@@ -35,11 +36,11 @@ client.on('ready', () => {
 
 client.on('message', (msg) => {
   if (msg.author.id === client.user.id) return;
-  if (msg.content.startsWith('!ap ')) {
-    const args = msg.content.substring(4).split(' ');
+  if (msg.content.startsWith('!ap')) {
+    const args = msg.content.split(' ').slice(1);
     parser.parse(args, { db, msg }, (err, argv, output) => {
       if (output) {
-        argv.msg.channel.send(output);
+        argv.msg.channel.send(output.replace(/index\.js/g, '!ap'));
       }
     });
   }
