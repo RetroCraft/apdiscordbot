@@ -42,7 +42,8 @@ module.exports = (args, msg) => {
       } else {
         clearInterval(repeat);
         timerMessage.delete();
-        msg.channel.send(`${msg.author} your countdown has finished!`);
+        const message = args[2] ? args.slice(2).join(' ') : 'Your countdown has finished!';
+        msg.channel.send(`${msg.author}: ${message}`);
       }
     }, 2000);
     runningCountdowns[`${msg.author}${msg.channel}`] = repeat;
