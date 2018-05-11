@@ -20,6 +20,9 @@ client.on('message', (msg) => {
     const args = msg.content.substring(1).split(' ');
     if (commands[args[0]]) commands[args[0]](args, msg);
   }
+  if (/^no (u|you)[.! ]*$/i.test(msg.content)) {
+    msg.channel.send(`${client.emojis.find('name', 'noU')}`);
+  }
 });
 
 client.login(settings.secret);
