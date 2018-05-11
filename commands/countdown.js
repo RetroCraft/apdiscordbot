@@ -25,10 +25,12 @@ exports.builder = {
   tomorrow: {
     alias: 't',
     description: 'If time has already passed, set for the same time tomorrow',
+    type: 'boolean',
   },
   everyone: {
     alias: 'e',
     description: 'Ping everyone when countdown has passed',
+    type: 'boolean',
   },
 };
 exports.handler = (args) => {

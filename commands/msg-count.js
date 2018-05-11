@@ -7,10 +7,12 @@ exports.builder = {
   mention: {
     alias: 'm',
     description: '@mention everyone who shows up as a result',
+    type: 'boolean',
   },
   quiet: {
     alias: 'q',
     description: 'Supress default msgcount box',
+    type: 'boolean',
   },
 };
 exports.handler = (args) => {
