@@ -2,15 +2,21 @@ const moment = require('moment');
 
 const runningCountdowns = {};
 
-const parseTime = (time) => {
+const parseTime = (time, tomorrow) => {
+  const now = Date.now();
   if (+time) {
-    const timeStart = Date.now();
     const duration = time * 1000;
-    return timeStart + duration;
+    return now + duration;
   } else if (moment(time, 'HH:mm:ss').isValid()) {
-    return +moment(time, 'HH:mm:ss');
+    const timestamp = moment(time, 'HH:mm:ss');
+    if (+timestamp < now) {
+      if (!tomorrow) return 'That time has already passed...pass --tomorrow to allow rescheduling';
+      const delayed = timestamp.add(1, 'day');
+      return +delayed;
+    }
+    return +timestamp;
   }
-  return null;
+  return "I don't understand that time...try a number of seconds (i.e. 10) or a time (i.e. 12:30)";
 };
 
 module.exports = (args, msg) => {
@@ -24,9 +30,9 @@ module.exports = (args, msg) => {
     }
   } else {
     let timerMessage;
-    const timeEnd = parseTime(args._[1]);
-    if (!timeEnd) {
-      msg.channel.send("I don't understand that time...try a number of seconds (i.e. 10) or a time (i.e. 12:30)");
+    const timeEnd = parseTime(args._[1], args.tomorrow);
+    if (typeof timeEnd === 'string') {
+      msg.channel.send(timeEnd);
       return;
     }
     msg.channel
