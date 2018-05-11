@@ -33,8 +33,10 @@ exports.builder = {
 };
 exports.handler = (args) => {
   if (args.time === 'cancel') {
-    if (runningCountdowns[`${args.msg.author}${args.msg.channel}`]) {
-      clearInterval(runningCountdowns[`${args.msg.author}${args.msg.channel}`]);
+    const countdown = runningCountdowns[`${args.msg.author}${args.msg.channel}`];
+    if (countdown) {
+      clearInterval(countdown.repeat);
+      countdown.timerMessage.delete();
       delete runningCountdowns[`${args.msg.author}${args.msg.channel}`];
       args.msg.channel.send('Countdown cancelled');
     } else {
@@ -51,20 +53,20 @@ exports.handler = (args) => {
       .send(`**Countdown:** ${Math.floor((timeEnd - Date.now()) / 1000)}`)
       .then((message) => {
         timerMessage = message;
+        const repeat = setInterval(() => {
+          const now = Date.now();
+          if (now < timeEnd) {
+            const timeLeft = timeEnd - now;
+            timerMessage.edit(`**Countdown:** ${Math.ceil(timeLeft / 1000)}`);
+          } else {
+            clearInterval(repeat);
+            timerMessage.delete();
+            const mention = args.everyone ? '@everyone' : args.msg.author;
+            const notif = args.message ? args.message.join(' ') : 'Your countdown has finished!';
+            args.msg.channel.send(`${mention}: ${notif}`);
+          }
+        }, 2000);
+        runningCountdowns[`${args.msg.author}${args.msg.channel}`] = { repeat, timerMessage };
       });
-    const repeat = setInterval(() => {
-      const now = Date.now();
-      if (now < timeEnd) {
-        const timeLeft = timeEnd - now;
-        timerMessage.edit(`**Countdown:** ${Math.ceil(timeLeft / 1000)}`);
-      } else {
-        clearInterval(repeat);
-        timerMessage.delete();
-        const mention = args.everyone ? '@everyone' : args.msg.author;
-        const message = args.message ? args.message.join(' ') : 'Your countdown has finished!';
-        args.msg.channel.send(`${mention}: ${message}`);
-      }
-    }, 2000);
-    runningCountdowns[`${args.msg.author}${args.msg.channel}`] = repeat;
   }
 };
