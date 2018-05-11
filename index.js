@@ -20,6 +20,7 @@ const parser = yargs()
   .wrap(null)
   .help();
 
+const prefix = '!ap';
 let responses = {};
 
 client.on('ready', () => {
@@ -32,15 +33,16 @@ client.on('ready', () => {
     { pattern: /^(no ?(u|you)|nay thee)$/i, out: noU.toString() },
     { pattern: `^${noU}$`, out: noU.toString() },
   ];
+  client.user.setActivity(`${prefix} help`);
 });
 
 client.on('message', (msg) => {
   if (msg.author.id === client.user.id) return;
-  if (msg.content.startsWith('!ap')) {
+  if (msg.content.startsWith(prefix)) {
     const args = msg.content.split(' ').slice(1);
     parser.parse(args, { db, msg }, (err, argv, output) => {
       if (output) {
-        argv.msg.channel.send(output.replace(/index\.js/g, '!ap'));
+        argv.msg.channel.send(output.replace(/index\.js/g, prefix));
       }
     });
   }
