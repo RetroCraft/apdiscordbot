@@ -1,18 +1,15 @@
 const Discord = require('discord.js');
 const _ = require('lodash');
-const minimist = require('minimist');
-
-const xkcd = require('./commands/xkcd');
-const msgcount = require('./commands/msg-count');
-const countdown = require('./commands/countdown');
+const yargs = require('yargs/yargs');
 
 const client = new Discord.Client();
-
-const commands = {
-  xkcd,
-  msgcount,
-  countdown,
-};
+const parser = yargs()
+  .usage('ap <command>')
+  .version('0.0.1')
+  .commandDir('commands')
+  .demand(1)
+  .strict()
+  .help();
 
 let responses = {};
 
@@ -29,13 +26,17 @@ client.on('ready', () => {
 });
 
 client.on('message', (msg) => {
+  if (msg.author.id === client.user.id) return;
   if (msg.content.startsWith('ap ')) {
     const args = msg.content.substring(3).split(' ');
-    const command = commands[args[0]];
-    if (command) command.action(minimist(args, command.args), msg);
+    parser.parse(args, { msg }, (err, argv, output) => {
+      if (output) {
+        argv.msg.channel.send(output);
+      }
+    });
   }
   // joke responses
-  if (msg.author.id !== client.user.id && msg.channel.name !== 'meta') {
+  if (msg.channel.name !== 'meta') {
     _.forEach(responses, (response) => {
       if (msg.content.match(response.pattern)) {
         msg.channel.send(response.out);
