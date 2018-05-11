@@ -18,23 +18,20 @@ module.exports = (args, msg) => {
     .then((messages) => {
       const stats = {};
       messages.forEach((message) => {
-        let name = message.author.username;
-        if (message.member) name = message.member.nickname;
-        if (stats[name]) {
-          stats[name] += 1;
+        if (stats[message.author.id]) {
+          stats[message.author.id] += 1;
         } else {
-          stats[name] = 1;
+          stats[message.author.id] = 1;
         }
       });
       const sorted = _.sortBy(
-        _.map(_.keys(stats), name => ({ name, num: stats[name] })),
+        _.map(_.keys(stats), id => ({ id, num: stats[id] })),
         'num',
       ).reverse();
-      const body = sorted.map(user => `**${user.name}**: ${user.num}`).join('\n');
+      const body = `${sorted.map(user => `**<@${user.id}>**: ${user.num}`).join('\n')}`;
       msg.channel.send(new Discord.RichEmbed()
         .setAuthor('Channel Stats')
-        .setTitle(`User activity of the last 100 messages in #${channel.name}:`)
-        .setDescription(body));
+        .addField(`**User activity of the last 100 messages in #${channel.name}:**`, body));
     })
     .catch(() => console.error(`[msgcount] failed to get messages for ${channel.name}`));
 };
