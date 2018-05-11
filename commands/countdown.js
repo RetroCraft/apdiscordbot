@@ -1,5 +1,7 @@
 const moment = require('moment');
 
+const Utilities = require('../utilities');
+
 const runningCountdowns = {};
 
 const parseTime = (time, tomorrow) => {
@@ -19,7 +21,7 @@ const parseTime = (time, tomorrow) => {
   return "I don't understand that time...try a number of seconds (i.e. 10) or a time (i.e. 12:30)";
 };
 
-exports.command = 'countdown <time> [message...]';
+exports.command = 'countdown <time> [message]';
 exports.desc = 'Set a countdown to <time> seconds or at 24-hour <time>';
 exports.builder = {
   tomorrow: {
@@ -64,8 +66,12 @@ exports.handler = (args) => {
             clearInterval(repeat);
             timerMessage.delete();
             const mention = args.everyone ? '@everyone' : args.msg.author;
-            const notif = args.message ? args.message.join(' ') : 'Your countdown has finished!';
+            const notif = args.message ? args.message : 'Your countdown has finished!';
+            console.log(notif);
             args.msg.channel.send(`${mention}: ${notif}`);
+            if (notif.startsWith(global.prefix)) {
+              Utilities.runCommand(notif, { msg: args.msg, db: args.db });
+            }
           }
         }, 2000);
         runningCountdowns[`${args.msg.author}${args.msg.channel}`] = { repeat, timerMessage };

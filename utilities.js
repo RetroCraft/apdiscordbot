@@ -1,4 +1,31 @@
 const _ = require('lodash');
+const yargs = require('yargs/yargs');
+
+const parser = yargs()
+  .usage('!ap <command>')
+  .version('0.0.1')
+  .commandDir('commands')
+  .demand(1)
+  .strict()
+  .wrap(null)
+  .help();
+
+exports.runCommand = (command, context) => {
+  const args = command
+    .match(/[^" ]+|"(?:\\"|[^"])+"/g)
+    .map((arg) => {
+      const first = [...arg].findIndex(char => char !== '"');
+      const last = [...arg].reverse().findIndex(char => char !== '"');
+      return arg.substring(first, arg.length - last);
+    })
+    .slice(1);
+  console.log(args);
+  parser.parse(args, context, (err, argv, output) => {
+    if (output) {
+      argv.msg.channel.send(output.replace(/index\.js/g, global.prefix));
+    }
+  });
+};
 
 exports.findUser = (user, channel) => {
   // perform id search

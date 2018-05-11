@@ -1,7 +1,10 @@
 const Discord = require('discord.js');
 const _ = require('lodash');
 const pg = require('pg');
-const yargs = require('yargs/yargs');
+
+const Utilities = require('./utilities');
+
+global.prefix = '!ap';
 
 const db = new pg.Client({
   connectionString: process.env.DATABASE_URL,
@@ -11,16 +14,6 @@ const db = new pg.Client({
 db.connect();
 
 const client = new Discord.Client();
-const parser = yargs()
-  .usage('!ap <command>')
-  .version('0.0.1')
-  .commandDir('commands')
-  .demand(1)
-  .strict()
-  .wrap(null)
-  .help();
-
-const prefix = '!ap';
 let responses = {};
 
 client.on('ready', () => {
@@ -33,18 +26,13 @@ client.on('ready', () => {
     { pattern: /^(no ?(u|you)|nay thee)$/i, out: noU.toString() },
     { pattern: `^${noU}$`, out: noU.toString() },
   ];
-  client.user.setActivity(`${prefix} help`);
+  client.user.setActivity(`${global.prefix} help`);
 });
 
 client.on('message', (msg) => {
   if (msg.author.id === client.user.id) return;
-  if (msg.content.startsWith(prefix)) {
-    const args = msg.content.split(' ').slice(1);
-    parser.parse(args, { db, msg }, (err, argv, output) => {
-      if (output) {
-        argv.msg.channel.send(output.replace(/index\.js/g, prefix));
-      }
-    });
+  if (msg.content.startsWith(global.prefix)) {
+    Utilities.runCommand(msg.content, { msg, db });
   }
   // joke responses
   if (msg.channel.name !== 'meta') {
