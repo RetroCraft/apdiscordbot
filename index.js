@@ -32,7 +32,8 @@ client.on('ready', () => {
 client.on('message', (msg) => {
   if (msg.content.startsWith('ap ')) {
     const args = msg.content.substring(3).split(' ');
-    if (commands[args[0]]) commands[args[0]](minimist(args), msg);
+    const command = commands[args[0]];
+    if (command) command.action(minimist(args, command.args), msg);
   }
   // joke responses
   if (msg.author.id !== client.user.id && msg.channel.name !== 'meta') {
