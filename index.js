@@ -29,8 +29,8 @@ client.on('ready', () => {
 });
 
 client.on('message', (msg) => {
-  if (msg.content.startsWith(':')) {
-    const args = msg.content.substring(1).split(' ');
+  if (msg.content.startsWith('ap ')) {
+    const args = msg.content.substring(3).split(' ');
     if (commands[args[0]]) commands[args[0]](args, msg);
   }
   // joke responses
