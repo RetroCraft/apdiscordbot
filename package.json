@@ -8,6 +8,8 @@
   },
   "scripts": {
     "start": "node -r dotenv/config index.js",
+    "fixps":
+      "sed -i \"s/DATABASE_URL=.*/DATABASE_URL=$(heroku pg:credentials:url DATABASE | tail -1 | tr -d '[:space:]' | sed 's/\\//\\\\\\//g')/\" .env",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -31,6 +33,7 @@
     "dotenv": "^5.0.1",
     "lodash": "^4.17.10",
     "moment": "^2.22.1",
+    "pg": "^7.4.3",
     "yargs": "^11.0.0"
   }
 }

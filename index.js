@@ -1,10 +1,18 @@
 const Discord = require('discord.js');
 const _ = require('lodash');
+const pg = require('pg');
 const yargs = require('yargs/yargs');
+
+const db = new pg.Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true,
+});
+
+db.connect();
 
 const client = new Discord.Client();
 const parser = yargs()
-  .usage('ap <command>')
+  .usage('!ap <command>')
   .version('0.0.1')
   .commandDir('commands')
   .demand(1)
@@ -27,9 +35,9 @@ client.on('ready', () => {
 
 client.on('message', (msg) => {
   if (msg.author.id === client.user.id) return;
-  if (msg.content.startsWith('ap ')) {
-    const args = msg.content.substring(3).split(' ');
-    parser.parse(args, { msg }, (err, argv, output) => {
+  if (msg.content.startsWith('!ap ')) {
+    const args = msg.content.substring(4).split(' ');
+    parser.parse(args, { db, msg }, (err, argv, output) => {
       if (output) {
         argv.msg.channel.send(output);
       }
