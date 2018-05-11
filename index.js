@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const _ = require('lodash');
 const settings = require('./settings.json');
 
 const xkcd = require('./commands/xkcd');
@@ -11,8 +12,18 @@ const commands = {
   msgcount,
 };
 
+let responses = {};
+
 client.on('ready', () => {
   console.log('[bot] connected');
+  const noU = client.emojis.find('name', 'noU');
+  responses = [
+    { pattern: /(yo)?u'?re? m[ou]m g[ae]y/i, out: 'your mom bigger gay' },
+    { pattern: /(yo)?u'?re? m[ou]m big(ger)? g[ae]y/i, out: 'your mom biggest gay' },
+    { pattern: /(yo)?u'?re? m[ou]m biggest? g[ae]y/i, out: noU.toString() },
+    { pattern: /(no ?(u|you))|(nay thee)/i, out: noU.toString() },
+    { pattern: noU.toString(), out: noU.toString() },
+  ];
 });
 
 client.on('message', (msg) => {
@@ -22,11 +33,13 @@ client.on('message', (msg) => {
   }
   // no u
   if (msg.author.id !== client.user.id) {
-    const noU = client.emojis.find('name', 'noU');
-    const noURegex = /^((yo)?u'?re? m[ou]m (big)? g[ae]y)|(no ?(u|you))[.! ]*$/i;
-    if (noURegex.exec(msg.content) || msg.content.includes(noU.toString())) {
-      msg.channel.send(`${client.emojis.find('name', 'noU')}`);
-    }
+    _.forEach(responses, (response) => {
+      if (msg.content.match(response.pattern)) {
+        msg.channel.send(response.out);
+        return false;
+      }
+      return true;
+    });
   }
 });
 
