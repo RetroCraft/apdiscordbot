@@ -14,7 +14,7 @@ const parseTime = (time) => {
 };
 
 module.exports = (args, msg) => {
-  if (args[1] === 'cancel') {
+  if (args._[0] === 'cancel') {
     if (runningCountdowns[`${msg.author}${msg.channel}`]) {
       clearInterval(runningCountdowns[`${msg.author}${msg.channel}`]);
       delete runningCountdowns[`${msg.author}${msg.channel}`];
@@ -24,7 +24,7 @@ module.exports = (args, msg) => {
     }
   } else {
     let timerMessage;
-    const timeEnd = parseTime(args[1]);
+    const timeEnd = parseTime(args._[1]);
     if (!timeEnd) {
       msg.channel.send("I don't understand that time...try a number of seconds (i.e. 10) or a time (i.e. 12:30)");
       return;
@@ -42,8 +42,9 @@ module.exports = (args, msg) => {
       } else {
         clearInterval(repeat);
         timerMessage.delete();
-        const message = args[2] ? args.slice(2).join(' ') : 'Your countdown has finished!';
-        msg.channel.send(`${msg.author}: ${message}`);
+        const mention = args.everyone ? '@everyone' : msg.author;
+        const message = args._[2] ? args._.slice(2).join(' ') : 'Your countdown has finished!';
+        msg.channel.send(`${mention}: ${message}`);
       }
     }, 2000);
     runningCountdowns[`${msg.author}${msg.channel}`] = repeat;

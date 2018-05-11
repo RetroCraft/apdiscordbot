@@ -3,13 +3,13 @@ const _ = require('lodash');
 
 module.exports = (args, msg) => {
   let { channel } = msg;
-  if (args[1]) {
+  if (args._[1]) {
     let referenced;
-    const snowflakeTest = /<#(.+)>/.exec(args[1]);
+    const snowflakeTest = /<#(.+)>/.exec(args._[1]);
     if (snowflakeTest) {
       referenced = msg.guild.channels.get(snowflakeTest[1]);
     } else {
-      referenced = msg.guild.channels.find(c => c.name === args[1]);
+      referenced = msg.guild.channels.find(c => c.name === args._[1]);
     }
     if (referenced) channel = referenced;
   }

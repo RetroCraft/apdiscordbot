@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const _ = require('lodash');
+const minimist = require('minimist');
 const settings = require('./settings.json');
 
 const xkcd = require('./commands/xkcd');
@@ -31,7 +32,7 @@ client.on('ready', () => {
 client.on('message', (msg) => {
   if (msg.content.startsWith('ap ')) {
     const args = msg.content.substring(3).split(' ');
-    if (commands[args[0]]) commands[args[0]](args, msg);
+    if (commands[args[0]]) commands[args[0]](minimist(args), msg);
   }
   // joke responses
   if (msg.author.id !== client.user.id && msg.channel.name !== 'meta') {

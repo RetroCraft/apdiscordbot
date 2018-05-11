@@ -18,9 +18,9 @@ const loadComic = num =>
     });
 
 module.exports = async (args, msg) => {
-  if (+args[1]) {
-    msg.channel.send(await loadComic(args[1]));
-  } else if (args[1] === 'random') {
+  if (+args._[1]) {
+    msg.channel.send(await loadComic(args._[1]));
+  } else if (args._[1] === 'random') {
     axios.get('http://xkcd.com/info.0.json').then(async (res) => {
       const max = res.data.num;
       const random = Math.floor(Math.random() * max) + 1;
