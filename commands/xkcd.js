@@ -20,20 +20,20 @@ const loadComic = num =>
 exports.command = 'xkcd [num]';
 exports.desc = 'Show the xkcd comic #[num]. [num] may be "random" for a random comic.';
 exports.builder = {};
-exports.handler = async (msg, args) => {
+exports.handler = async (args) => {
   if (+args.num) {
-    msg.channel.send(await loadComic(args.num));
+    args.msg.channel.send(await loadComic(args.num));
   } else if (args.num === 'random') {
     axios.get('http://xkcd.com/info.0.json').then(async (res) => {
       const max = res.data.num;
       const random = Math.floor(Math.random() * max) + 1;
-      msg.channel.send(await loadComic(random));
+      args.msg.channel.send(await loadComic(random));
     });
   } else {
     axios
       .get('http://xkcd.com/info.0.json')
       .then((res) => {
-        msg.channel.send({ embed: sendComic(res.data) });
+        args.msg.channel.send({ embed: sendComic(res.data) });
       })
       .catch(() => {
         console.error('[xkcd] failed to load current xkcd commic');
