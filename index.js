@@ -46,4 +46,48 @@ client.on('message', (msg) => {
   }
 });
 
+client.on('messageReactionAdd', async (reaction, user) => {
+  // only handle up/down votes
+  if (reaction.emoji.name !== 'upvote' && reaction.emoji.name !== 'downvote') return;
+  // don't handle apdiscordbot's votes
+  if (reaction.me) return;
+  // only handle public channel votes (not dms etc)
+  if (reaction.message.channel.type !== 'text') return;
+  // don't handle self votes
+  if (reaction.message.author.id === user.id) return;
+  try {
+    const sign = reaction.emoji.name === 'downvote' ? '-' : '+';
+    await db.query(
+      `INSERT INTO karma as k (user_id, karma) VALUES ($1, ${sign}1)
+      ON CONFLICT (user_id) DO UPDATE
+      SET karma = k.karma ${sign} 1`,
+      [reaction.message.author.id],
+    );
+  } catch (e) {
+    console.log(`[karma/add] Error: ${e}`);
+  }
+});
+
+client.on('messageReactionRemove', async (reaction, user) => {
+  // only handle up/down votes
+  if (reaction.emoji.name !== 'upvote' && reaction.emoji.name !== 'downvote') return;
+  // don't handle apdiscordbot's votes
+  if (reaction.me) return;
+  // only handle public channel votes (not dms etc)
+  if (reaction.message.channel.type !== 'text') return;
+  // don't handle self votes
+  if (reaction.message.author.id === user.id) return;
+  try {
+    const sign = reaction.emoji.name === 'downvote' ? '+' : '-';
+    await db.query(
+      `INSERT INTO karma as k (user_id, karma) VALUES ($1, ${sign}1)
+      ON CONFLICT (user_id) DO UPDATE
+      SET karma = k.karma ${sign} 1`,
+      [reaction.message.author.id],
+    );
+  } catch (e) {
+    console.log(`[karma/remove] Error: ${e}`);
+  }
+});
+
 client.login(process.env.BOT_TOKEN);

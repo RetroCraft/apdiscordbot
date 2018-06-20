@@ -4,3 +4,9 @@ CREATE TABLE IF NOT EXISTS lists(
   list    VARCHAR(32),
   UNIQUE (user_id, list)
 );
+
+CREATE TABLE IF NOT EXISTS karma(
+  user_id BIGINT,
+  karma INT,
+  UNIQUE (user_id)
+)
