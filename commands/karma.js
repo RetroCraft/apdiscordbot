@@ -7,15 +7,19 @@ exports.builder = {};
 exports.handler = async (args) => {
   if (args.user) {
     const user = Utilities.findUser(args.user, args.msg.channel);
+    if (!user) {
+      args.msg.channel.send("I'm sorry, I don't recognize that user. Try an @mention or use the nickname.");
+      return;
+    }
     let karma;
     try {
       karma = await args.db.query('SELECT karma FROM karma WHERE user_id = $1', [user.id]);
+      karma = karma.rows.length > 0 ? karma.rows[0].karma : 0;
     } catch (e) {
       args.msg.channel.send('Oops...something went wrong getting the karma score.');
       console.log(`[karma/get] Error: ${e}`);
       return;
     }
-    karma = karma.rows.length > 0 ? karma.rows[0].karma : 0;
     args.msg.channel.send(`**Karma for ${user.username}:** ${karma}`);
   } else {
     let leaderboard;
