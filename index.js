@@ -55,6 +55,9 @@ client.on('messageReactionAdd', async (reaction, user) => {
   if (reaction.message.channel.type !== 'text') return;
   // don't handle self votes
   if (reaction.message.author.id === user.id) return;
+  // only handle non-meta, non-studying
+  if (reaction.message.channel.name === 'meta') return;
+  if (reaction.message.channel.parent && reaction.message.channel.parent.name === 'School') return;
   try {
     const sign = reaction.emoji.name === 'downvote' ? '-' : '+';
     await db.query(
@@ -77,6 +80,9 @@ client.on('messageReactionRemove', async (reaction, user) => {
   if (reaction.message.channel.type !== 'text') return;
   // don't handle self votes
   if (reaction.message.author.id === user.id) return;
+  // only handle non-meta, non-studying
+  if (reaction.message.channel.name === 'meta') return;
+  if (reaction.message.channel.parent && reaction.message.channel.parent.name === 'school') return;
   try {
     const sign = reaction.emoji.name === 'downvote' ? '+' : '-';
     await db.query(
