@@ -32,7 +32,7 @@ client.on('ready', () => {
   client.user.setActivity(`${global.prefix} help`);
 });
 
-client.on('message', (msg) => {
+client.on('message', async (msg) => {
   if (msg.author.id === client.user.id) return;
   if (msg.content.startsWith(global.prefix)) {
     Utilities.runCommand(msg.content, { msg, db });
@@ -48,15 +48,26 @@ client.on('message', (msg) => {
     });
   }
   // swear counter
-  const words = msg.content.split(' ');
-  const foundSwears = [];
+  const words = msg.content.split(/\s/);
+  let foundSwears = 0;
+
   words.forEach((word) => {
     if (swears.isProfaneLike(word)) {
-      foundSwears.push(word);
+      foundSwears += 1;
     }
   });
-  if (foundSwears.length > 0) {
-    msg.react(String.fromCodePoint(0x1f1e5 + foundSwears.length));
+  if (foundSwears === 0 && swears.isProfaneLike(words.join(''))) foundSwears = 1;
+  if (foundSwears > 0) {
+    try {
+      db.query(
+        `INSERT INTO swears as s (user_id, swears) VALUES ($1, $2)
+        ON CONFLICT (user_id) DO UPDATE
+        SET swears = s.swears + $2`,
+        [msg.author.id, foundSwears],
+      );
+    } catch (e) {
+      console.log(`[swear/catch] Error: ${e}`);
+    }
   }
 });
 

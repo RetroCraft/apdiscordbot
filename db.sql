@@ -10,3 +10,9 @@ CREATE TABLE IF NOT EXISTS karma(
   karma INT,
   UNIQUE (user_id)
 )
+
+CREATE TABLE IF NOT EXISTS swears(
+  user_id BIGINT,
+  swears INT,
+  UNIQUE (user_id)
+)
