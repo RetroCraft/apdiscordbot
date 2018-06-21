@@ -1,3 +1,4 @@
+const Filter = require('bad-words');
 const _ = require('lodash');
 const yargs = require('yargs/yargs');
 
@@ -61,3 +62,6 @@ exports.findUsers = (users, channel) => {
   }
   return found;
 };
+
+const swears = new Filter();
+exports.swearCheck = word => swears.isProfaneLike(word);

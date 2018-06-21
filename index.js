@@ -1,4 +1,3 @@
-const Filter = require('bad-words');
 const Discord = require('discord.js');
 const _ = require('lodash');
 const pg = require('pg');
@@ -13,8 +12,6 @@ const db = new pg.Client({
 });
 
 db.connect();
-
-const swears = new Filter();
 
 const client = new Discord.Client();
 let responses = {};
@@ -53,11 +50,11 @@ client.on('message', async (msg) => {
     let foundSwears = 0;
 
     words.forEach((word) => {
-      if (swears.isProfaneLike(word)) {
+      if (Utilities.swearCheck(word)) {
         foundSwears += 1;
       }
     });
-    if (foundSwears === 0 && swears.isProfaneLike(words.join(''))) foundSwears = 1;
+    if (foundSwears === 0 && Utilities.swearCheck(words.join(''))) foundSwears = 1;
     if (foundSwears > 0) {
       try {
         db.query(
