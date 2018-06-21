@@ -1,6 +1,6 @@
 {
   "name": "apdiscordbot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AP Discord Bot",
   "main": "index.js",
   "engines": {
