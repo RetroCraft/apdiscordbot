@@ -48,25 +48,27 @@ client.on('message', async (msg) => {
     });
   }
   // swear counter
-  const words = msg.content.split(/\s/);
-  let foundSwears = 0;
+  if (msg.channel.name !== 'spam') {
+    const words = msg.content.split(/\s/);
+    let foundSwears = 0;
 
-  words.forEach((word) => {
-    if (swears.isProfaneLike(word)) {
-      foundSwears += 1;
-    }
-  });
-  if (foundSwears === 0 && swears.isProfaneLike(words.join(''))) foundSwears = 1;
-  if (foundSwears > 0) {
-    try {
-      db.query(
-        `INSERT INTO swears as s (user_id, swears) VALUES ($1, $2)
+    words.forEach((word) => {
+      if (swears.isProfaneLike(word)) {
+        foundSwears += 1;
+      }
+    });
+    if (foundSwears === 0 && swears.isProfaneLike(words.join(''))) foundSwears = 1;
+    if (foundSwears > 0) {
+      try {
+        db.query(
+          `INSERT INTO swears as s (user_id, swears) VALUES ($1, $2)
         ON CONFLICT (user_id) DO UPDATE
         SET swears = s.swears + $2`,
-        [msg.author.id, foundSwears],
-      );
-    } catch (e) {
-      console.log(`[swear/catch] Error: ${e}`);
+          [msg.author.id, foundSwears],
+        );
+      } catch (e) {
+        console.log(`[swear/catch] Error: ${e}`);
+      }
     }
   }
 });
