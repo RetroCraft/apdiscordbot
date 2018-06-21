@@ -1,3 +1,4 @@
+const Filter = require('bad-words');
 const Discord = require('discord.js');
 const _ = require('lodash');
 const pg = require('pg');
@@ -12,6 +13,8 @@ const db = new pg.Client({
 });
 
 db.connect();
+
+const swears = new Filter();
 
 const client = new Discord.Client();
 let responses = {};
@@ -43,6 +46,17 @@ client.on('message', (msg) => {
       }
       return true;
     });
+  }
+  // swear counter
+  const words = msg.content.split(' ');
+  const foundSwears = [];
+  words.forEach((word) => {
+    if (swears.isProfaneLike(word)) {
+      foundSwears.push(word);
+    }
+  });
+  if (foundSwears.length > 0) {
+    msg.react(String.fromCodePoint(0x1f1e5 + foundSwears.length));
   }
 });
 
