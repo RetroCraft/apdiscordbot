@@ -16,8 +16,7 @@ db.connect();
 const client = new Discord.Client();
 let responses = {};
 
-client.on('ready', () => {
-  console.log('[bot] connected');
+client.on('ready', async () => {
   const noU = client.emojis.find('name', 'noU');
   responses = [
     { pattern: /^(yo)?u'?re? m[ou]m g[ae]y$/i, out: 'your mom bigger gay' },
@@ -26,7 +25,12 @@ client.on('ready', () => {
     { pattern: /^(no ?(u|you)|nay thee)$/i, out: noU.toString() },
     { pattern: `^${noU}$`, out: noU.toString() },
   ];
-  client.user.setActivity(`${global.prefix} help`);
+  try {
+    await client.user.setActivity(`${global.prefix} help | ${Utilities.version}`);
+  } catch (e) {
+    console.error(`[bot] Error setting activity: ${e}`);
+  }
+  console.log('[bot] ready');
 });
 
 client.on('message', async (msg) => {

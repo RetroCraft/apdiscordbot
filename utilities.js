@@ -4,12 +4,14 @@ const yargs = require('yargs/yargs');
 
 const parser = yargs()
   .usage('!ap <command>')
-  .version('0.0.1')
+  .version()
   .commandDir('commands')
   .demand(1)
   .strict()
   .wrap(null)
   .help();
+
+exports.version = require('./package.json').version;
 
 exports.runCommand = (command, context) => {
   const args = command
@@ -20,7 +22,7 @@ exports.runCommand = (command, context) => {
       return arg.substring(first, arg.length - last);
     })
     .slice(1);
-  console.log(args);
+  // console.log(args);
   parser.parse(args, context, (err, argv, output) => {
     if (output) {
       argv.msg.channel.send(output.replace(/index\.js/g, global.prefix));
