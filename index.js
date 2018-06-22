@@ -11,12 +11,16 @@ const db = new pg.Client({
   ssl: true,
 });
 
-db.connect();
-
 const client = new Discord.Client();
 let responses = {};
 
 client.on('ready', async () => {
+  try {
+    await db.connect();
+  } catch (e) {
+    console.error(`[bot] Error connecting to database: ${e}`);
+  }
+
   const noU = client.emojis.find('name', 'noU');
   responses = [
     { pattern: /^(yo)?u'?re? m[ou]m g[ae]y$/i, out: 'your mom bigger gay' },
