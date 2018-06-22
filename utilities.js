@@ -65,5 +65,5 @@ exports.findUsers = (users, channel) => {
   return found;
 };
 
-const swears = new Filter({ exclude: ['gay', 'space', 'analyze'] });
+const swears = new Filter({ exclude: ['space', 'analyze'] });
 exports.swearCheck = word => swears.isProfaneLike(word);
