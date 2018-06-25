@@ -22,7 +22,7 @@ exports.handler = async (args) => {
       console.log(`[swears/get] Error: ${e}`);
       return;
     }
-    args.msg.channel.send(`**Swears for ${user.username}:** ${swears}`);
+    args.msg.channel.send(new Discord.RichEmbed().addField('**Swear Leaderboard**', `<@${user.id}>: ${swears}`));
   } else {
     let leaderboard;
     try {
