@@ -32,7 +32,7 @@ exports.runCommand = (command, context) => {
 
 exports.findUser = (user, channel) => {
   // perform id search
-  const id = /<@(\d+)>/.exec(user);
+  const id = /<@!?(\d+)>/.exec(user);
   if (id && +id[1]) {
     const idSearch = channel.client.users.get(id[1]);
     if (idSearch) return idSearch;
@@ -40,10 +40,10 @@ exports.findUser = (user, channel) => {
   // perform nickname/username search
   const { guild } = channel;
   if (guild) {
-    const nickSearch = guild.members.find('displayName', user);
+    const nickSearch = guild.members.find(test => test.displayName.toLowerCase() === user.toLowerCase());
     if (nickSearch) return nickSearch.user;
   }
-  const nameSearch = channel.client.users.find('username', user);
+  const nameSearch = channel.client.users.find(test => test.username.toLowerCase() === user.toLowerCase());
   if (nameSearch) return nameSearch;
   return null;
 };
