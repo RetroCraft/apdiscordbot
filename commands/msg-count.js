@@ -38,12 +38,11 @@ exports.handler = (args) => {
           stats[message.author.id] = 1;
         }
       });
-      const sorted = _.sortBy(
-        _.map(_.keys(stats), id => ({ id, num: stats[id] })),
-        'num',
-      ).reverse();
+      const sorted = _
+        .sortBy(_.map(_.keys(stats), id => ({ id, num: stats[id] })), 'num')
+        .reverse();
       if (!args.quiet) {
-        const body = `${sorted.map(user => `**<@${user.id}>**: ${user.num}`).join('\n')}`;
+        const body = sorted.map(user => `**<@${user.id}>**: ${user.num}`).join('\n');
         args.msg.channel.send(new Discord.RichEmbed()
           .setAuthor('Channel Stats')
           .addField(`**User activity of the last 100 messages in #${channel.name}:**`, body));

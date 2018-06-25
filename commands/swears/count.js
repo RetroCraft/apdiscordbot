@@ -1,3 +1,4 @@
+const Discord = require('discord.js');
 const _ = require('lodash');
 const Utilities = require('../../utilities');
 
@@ -33,9 +34,15 @@ exports.handler = async (args) => {
     }
     leaderboard = _.sortBy(leaderboard, 'swears').reverse();
     const scores = await Promise.all(_.map(leaderboard, async (entry) => {
-      const entryUser = await args.msg.client.fetchUser(entry.user_id);
-      return `**${entryUser.username}**: ${entry.swears}`;
+      let { swears } = entry;
+      if (swears >= 1000) {
+        swears = `${swears / 1000} fucktons`;
+      } else {
+        swears = `${swears} swears`;
+      }
+      return `**<@${entry.user_id}>**: ${swears}`;
     }));
-    args.msg.channel.send(`**Swear Leaderboard**\n${scores.join('\n')}`);
+    const body = scores.join('\n');
+    args.msg.channel.send(new Discord.RichEmbed().addField('**Swear Leaderboard**', body));
   }
 };
