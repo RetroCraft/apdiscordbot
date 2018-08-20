@@ -7,7 +7,7 @@
     "node": "8.11.3"
   },
   "scripts": {
-    "start": "node -r dotenv/config index.js",
+    "start": "nodemon -r dotenv/config index.js",
     "fixps": "sed -i \"s/DATABASE_URL=.*/DATABASE_URL=$(heroku pg:credentials:url DATABASE | tail -1 | tr -d '[:space:]' | sed 's/\\//\\\\\\//g')/\" .env",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -24,7 +24,8 @@
   "devDependencies": {
     "eslint": "^5.4.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.11.0"
+    "eslint-plugin-import": "^2.11.0",
+    "nodemon": "^1.18.3"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -34,6 +35,7 @@
     "lodash": "^4.17.10",
     "moment": "^2.22.1",
     "pg": "^7.4.3",
+    "pg-native": "^3.0.0",
     "sequelize": "^4.38.0",
     "yargs": "^12.0.1"
   }

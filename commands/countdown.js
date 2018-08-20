@@ -9,7 +9,7 @@ const parseTime = (time, tomorrow) => {
   if (+time) {
     const duration = time * 1000;
     return now + duration;
-  } else if (moment(time, 'HH:mm:ss').isValid()) {
+  } if (moment(time, 'HH:mm:ss').isValid()) {
     const timestamp = moment(time, 'HH:mm:ss');
     if (+timestamp < now) {
       if (!tomorrow) return 'That time has already passed...pass --tomorrow to allow rescheduling';
@@ -70,7 +70,7 @@ exports.handler = (args) => {
             console.log(notif);
             args.msg.channel.send(`${mention}: ${notif}`);
             if (notif.startsWith(global.prefix)) {
-              Utilities.runCommand(notif, { msg: args.msg, db: args.db });
+              Utilities.runCommand(notif, { msg: args.msg });
             }
           }
         }, 2000);

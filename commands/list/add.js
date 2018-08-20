@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { Lists } = require('../../sequelize');
 const Utilities = require('../../utilities');
 
 exports.command = 'add <list> <users...>';
@@ -12,20 +13,21 @@ exports.handler = async (args) => {
 
   // loop through specified users
   let failed = false;
-  await Promise.all(_.map(users, async (user) => {
-    try {
-      await args.db.query('INSERT INTO lists(user_id, list) VALUES ($1, $2)', [
-        user.id,
-        args.list,
-      ]);
-    } catch (e) {
-      args.msg.channel.send(`Failed to add ${user.username} to list. Maybe they're already in the list? :(`);
-      console.error(`[list/add] Error: ${e}`);
-      failed = true;
-      return false;
-    }
-    return true;
-  }));
+  await Promise.all(
+    _.map(users, async (user) => {
+      try {
+        await Lists.create({ user_id: user.id, list: args.list });
+      } catch (e) {
+        args.msg.channel.send(
+          `Failed to add ${user.username} to list. Maybe they're already in the list? :(`,
+        );
+        console.error(`[list/add] Error: ${e}`);
+        failed = true;
+        return false;
+      }
+      return true;
+    }),
+  );
   if (failed) return;
 
   args.msg.channel.send(`Added ${_.map(users, 'username').join(', ')} to ${args.list}`);

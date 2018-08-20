@@ -1,22 +1,17 @@
 const Discord = require('discord.js');
 const _ = require('lodash');
-const pg = require('pg');
 
+const { db, Swears, Karma } = require('./sequelize');
 const Utilities = require('./utilities');
 
 global.prefix = '!ap';
-
-const db = new pg.Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true,
-});
 
 const client = new Discord.Client();
 let responses = {};
 
 client.on('ready', async () => {
   try {
-    await db.connect();
+    await db.authenticate();
   } catch (e) {
     console.error(`[bot] Error connecting to database: ${e}`);
   }
@@ -40,7 +35,7 @@ client.on('ready', async () => {
 client.on('message', async (msg) => {
   if (msg.author.id === client.user.id) return;
   if (msg.content.startsWith(global.prefix)) {
-    Utilities.runCommand(msg.content, { msg, db });
+    Utilities.runCommand(msg.content, { msg });
   }
   // joke responses
   if (msg.channel.name !== 'meta') {
@@ -65,12 +60,8 @@ client.on('message', async (msg) => {
     if (foundSwears === 0 && Utilities.swearCheck(words.join(''))) foundSwears = 1;
     if (foundSwears > 0) {
       try {
-        db.query(
-          `INSERT INTO swears as s (user_id, swears) VALUES ($1, $2)
-        ON CONFLICT (user_id) DO UPDATE
-        SET swears = s.swears + $2`,
-          [msg.author.id, foundSwears],
-        );
+        const record = await Swears.findById(msg.author.id);
+        await record.increment('swears', { by: foundSwears });
       } catch (e) {
         console.log(`[swear/catch] Error: ${e}`);
       }
@@ -91,13 +82,11 @@ client.on('messageReactionAdd', async (reaction, user) => {
   if (reaction.message.channel.name === 'meta') return;
   if (reaction.message.channel.parent && reaction.message.channel.parent.name === 'School') return;
   try {
-    const sign = reaction.emoji.name === 'downvote' ? '-' : '+';
-    await db.query(
-      `INSERT INTO karma as k (user_id, karma) VALUES ($1, ${sign}1)
-      ON CONFLICT (user_id) DO UPDATE
-      SET karma = k.karma ${sign} 1`,
-      [reaction.message.author.id],
-    );
+    const func = reaction.emoji.name === 'downvote' ? 'decrement' : 'increment';
+    const record = await Karma.findById(reaction.message.author.id);
+    await record[func]('karma', {
+      by: 1,
+    });
   } catch (e) {
     console.log(`[karma/add] Error: ${e}`);
   }
@@ -116,13 +105,11 @@ client.on('messageReactionRemove', async (reaction, user) => {
   if (reaction.message.channel.name === 'meta') return;
   if (reaction.message.channel.parent && reaction.message.channel.parent.name === 'school') return;
   try {
-    const sign = reaction.emoji.name === 'downvote' ? '+' : '-';
-    await db.query(
-      `INSERT INTO karma as k (user_id, karma) VALUES ($1, ${sign}1)
-      ON CONFLICT (user_id) DO UPDATE
-      SET karma = k.karma ${sign} 1`,
-      [reaction.message.author.id],
-    );
+    const func = reaction.emoji.name === 'downvote' ? 'increment' : 'decrement';
+    const record = await Karma.findById(reaction.message.author.id);
+    await record[func]('karma', {
+      by: 1,
+    });
   } catch (e) {
     console.log(`[karma/remove] Error: ${e}`);
   }

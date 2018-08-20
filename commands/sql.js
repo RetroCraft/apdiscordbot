@@ -1,3 +1,5 @@
+const { db } = require('../sequelize');
+
 exports.command = 'sql <query...>';
 exports.aliases = [];
 exports.desc = 'Perform a SQL query (jam only)';
@@ -8,8 +10,9 @@ exports.handler = async (args) => {
     return;
   }
   try {
-    const res = await args.db.query(args.query.join(' '));
-    args.msg.channel.send(`Result: \`\`\`json\n${JSON.stringify(res)}\`\`\``);
+    await db
+      .query(args.query.join(' '))
+      .spread((_results, metadata) => args.msg.channel.send(`\`\`\`json\n${JSON.stringify(metadata)}\n\`\`\``));
   } catch (e) {
     args.msg.channel.send(`Oops: ${e}`);
   }
