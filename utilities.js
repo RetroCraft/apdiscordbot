@@ -40,10 +40,14 @@ exports.findUser = (user, channel) => {
   // perform nickname/username search
   const { guild } = channel;
   if (guild) {
-    const nickSearch = guild.members.find(test => test.displayName.toLowerCase() === user.toLowerCase());
+    const nickSearch = guild.members.find(
+      test => test.displayName.toLowerCase() === user.toLowerCase(),
+    );
     if (nickSearch) return nickSearch.user;
   }
-  const nameSearch = channel.client.users.find(test => test.username.toLowerCase() === user.toLowerCase());
+  const nameSearch = channel.client.users.find(
+    test => test.username.toLowerCase() === user.toLowerCase(),
+  );
   if (nameSearch) return nameSearch;
   return null;
 };

@@ -21,7 +21,7 @@ client.on('ready', async () => {
     console.error(`[bot] Error connecting to database: ${e}`);
   }
 
-  const noU = client.emojis.find('name', 'noU');
+  const noU = client.emojis.find(emoji => emoji.name === 'noU');
   responses = [
     { pattern: /^(yo)?u'?re? m[ou]m g[ae]y$/i, out: 'your mom bigger gay' },
     { pattern: /^(yo)?u'?re? m[ou]m big(ger)? g[ae]y$/i, out: 'your mom biggest gay' },
