@@ -7,7 +7,8 @@
     "node": "8.11.3"
   },
   "scripts": {
-    "start": "nodemon -r dotenv/config index.js",
+    "start": "node -r dotenv/config index.js",
+    "dev": "nodemon -r dotenv/config index.js",
     "fixps": "sed -i \"s/DATABASE_URL=.*/DATABASE_URL=$(heroku pg:credentials:url DATABASE | tail -1 | tr -d '[:space:]' | sed 's/\\//\\\\\\//g')/\" .env",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
