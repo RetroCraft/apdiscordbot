@@ -38,6 +38,6 @@ exports.handler = async (args) => {
       _.map(leaderboard, async entry => `**<@${entry.user_id}>**: ${entry.karma}`),
     );
     const body = scores.join('\n');
-    args.msg.channel.send(new Discord.RichEmbed().addField('**Swear Leaderboard**', body));
+    args.msg.channel.send(new Discord.RichEmbed().addField('**Karma Leaderboard**', body));
   }
 };
