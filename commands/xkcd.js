@@ -1,40 +1,45 @@
 const axios = require('axios');
 const Discord = require('discord.js');
+const xkcd = require('relevant-xkcd');
 
 const sendComic = comicData => new Discord.RichEmbed()
-  .setTitle(`${comicData.num}: ${comicData.safe_title}`)
+  .setTitle(`${comicData.id}: ${comicData.safeTitle}`)
   .setAuthor('xkcd', 'https://xkcd.com/s/0b7742.png')
-  .setImage(comicData.img)
-  .setFooter(comicData.alt);
-
-const loadComic = num => axios
-  .get(`http://xkcd.com/${num}/info.0.json`)
-  .then(res => ({ embed: sendComic(res.data) }))
-  .catch(() => {
-    console.error(`[xkcd] failed finding comic ${num}`);
-    return `Cannot find xkcd comic ${num}`;
-  });
+  .setImage(comicData.imageURL)
+  .setFooter(comicData.altText);
 
 exports.command = 'xkcd [num]';
 exports.desc = 'Show the xkcd comic #[num]. [num] may be "random" for a random comic.';
 exports.builder = {};
 exports.handler = async (args) => {
   if (+args.num) {
-    args.msg.channel.send(await loadComic(args.num));
+    xkcd.fetchComic(args.num).then(async comic => args.msg.channel.send(sendComic(comic)));
   } else if (args.num === 'random') {
-    axios.get('http://xkcd.com/info.0.json').then(async (res) => {
-      const max = res.data.num;
-      const random = Math.floor(Math.random() * max) + 1;
-      args.msg.channel.send(await loadComic(random));
+    xkcd.fetchRandom().then(async (res) => {
+      args.msg.channel.send(sendComic(res));
+    });
+  } else if (args.num) {
+    // args.num is not emptystring or null
+    xkcd.fetchAllRelevant(args.num).then(async (res) => {
+      const totalComics = res.length;
+      let currComic = 0;
+      const comicMsg = await args.msg.channel.send(sendComic(res[currComic]));
+      await comicMsg.react('▶');
+
+      const collector = comicMsg.createReactionCollector(
+        (reaction, user) => reaction.emoji.name === '▶' && user.id !== comicMsg.client.user.id,
+      );
+      collector.on('collect', async () => {
+        const nextComic = currComic + 1;
+        if (totalComics > nextComic) currComic = nextComic;
+        await comicMsg.edit('', sendComic(res[currComic]));
+        await comicMsg.clearReactions();
+        await comicMsg.react('▶');
+      });
     });
   } else {
-    axios
-      .get('http://xkcd.com/info.0.json')
-      .then((res) => {
-        args.msg.channel.send({ embed: sendComic(res.data) });
-      })
-      .catch(() => {
-        console.error('[xkcd] failed to load current xkcd commic');
-      });
+    xkcd.fetchCurrent().then(async (res) => {
+      args.msg.channel.send(sendComic(res));
+    });
   }
 };
