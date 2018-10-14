@@ -37,6 +37,7 @@
     "moment": "^2.22.1",
     "pg": "^7.4.3",
     "pg-native": "^3.0.0",
+    "relevant-xkcd": "^1.1.1",
     "sequelize": "^4.38.0",
     "yargs": "^12.0.1"
   }
