@@ -16,14 +16,7 @@ client.on('ready', async () => {
     console.error(`[bot] Error connecting to database: ${e}`);
   }
 
-  const noU = client.emojis.find(emoji => emoji.name === 'noU');
-  responses = [
-    { pattern: /^(yo)?u'?re? m[ou]m g[ae]y$/i, out: 'your mom bigger gay' },
-    { pattern: /^(yo)?u'?re? m[ou]m big(ger)? g[ae]y$/i, out: 'your mom biggest gay' },
-    { pattern: /^(yo)?u'?re? m[ou]m biggest? g[ae]y$/i, out: noU.toString() },
-    { pattern: /^(no ?(u|you)|nay thee)$/i, out: noU.toString() },
-    { pattern: `^${noU}$`, out: noU.toString() },
-  ];
+  responses = [];
   try {
     await client.user.setActivity(`${global.prefix} help | ${Utilities.version}`);
   } catch (e) {
