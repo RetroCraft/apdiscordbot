@@ -3,7 +3,7 @@ const _ = require('lodash');
 const yargs = require('yargs/yargs');
 
 const parser = yargs()
-  .usage('!ap <command>')
+  .usage('!hawk <command>')
   .version()
   .commandDir('commands')
   .demand(1)

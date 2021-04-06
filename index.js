@@ -4,7 +4,7 @@ const _ = require('lodash');
 const { db, Swears, Karma } = require('./sequelize');
 const Utilities = require('./utilities');
 
-global.prefix = '!ap';
+global.prefix = '!hawk';
 
 const client = new Discord.Client();
 let responses = {};
